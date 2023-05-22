@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUploadDto } from './dto/create-upload.dto';
-import { UpdateUploadDto } from './dto/update-upload.dto';
+import {
+  FirebaseStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Injectable()
 export class UploadService {
-  create(createUploadDto: CreateUploadDto) {
-    return 'This action adds a new upload';
-  }
+  private storage: FirebaseStorage;
 
-  findAll() {
-    return `This action returns all upload`;
-  }
+  constructor(private firebaseService: FirebaseService) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} upload`;
-  }
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    this.storage = this.firebaseService.storage;
 
-  update(id: number, updateUploadDto: UpdateUploadDto) {
-    return `This action updates a #${id} upload`;
-  }
+    const fileRef = ref(this.storage, file.originalname);
+    const snapshot = await uploadBytes(fileRef, file.buffer);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
 
-  remove(id: number) {
-    return `This action removes a #${id} upload`;
+    // const fileRef = this.storage.ref().child(file.originalname);
+    // const snapshot = await fileRef.put(file.buffer);
+    // const downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 }
