@@ -19,8 +19,8 @@ export class UploadService {
   async uploadFile(file: Express.Multer.File): Promise<string> {
     const bucket = this.storage.bucket();
     const ext = file.mimetype.split('/')[1];
-    console.log(ext);
-    const fileName = 'nome_do_arquivo.png';
+    console.log();
+    const fileName = `novo_arquivo.${ext}`;
     const fileRef = bucket.file(fileName);
     await fileRef.save(file.buffer);
 
