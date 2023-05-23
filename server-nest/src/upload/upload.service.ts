@@ -1,11 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
 import { Storage } from 'firebase-admin/storage';
-// import {
-//   FirebaseStorage,
-//   ref,
-//   uploadBytes,
-//   getDownloadURL,
-// } from 'firebase/storage';
 import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Injectable()
@@ -18,9 +13,11 @@ export class UploadService {
 
   async uploadFile(file: Express.Multer.File): Promise<string> {
     const bucket = this.storage.bucket();
+
+    const uuidFileName = uuidv4();
     const ext = file.mimetype.split('/')[1];
-    console.log();
-    const fileName = `novo_arquivo.${ext}`;
+    const fileName = `${uuidFileName}.${ext}`;
+
     const fileRef = bucket.file(fileName);
     await fileRef.save(file.buffer);
 
@@ -29,9 +26,10 @@ export class UploadService {
       expires: '03-01-2500',
     });
 
-    // // const fileRef = ref(this.storage, file.originalname);
-    // // const snapshot = await uploadBytes(fileRef, file.buffer);
-    // // const downloadUrl = await getDownloadURL(snapshot.ref);
+    // firebase/storage
+    // const fileRef = ref(this.storage, file.originalname);
+    // const snapshot = await uploadBytes(fileRef, file.buffer);
+    // const downloadUrl = await getDownloadURL(snapshot.ref);
     return signedUrl[0];
   }
 }
