@@ -1,12 +1,7 @@
-import {
-  Controller,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { FileSizeInterceptor } from './filesize.interceptor';
-import { UploadService } from './upload.service';
+import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
+import { FileSizeInterceptor } from './filesize.interceptor'
+import { UploadService } from './upload.service'
 
 @Controller('upload')
 export class UploadController {
@@ -18,7 +13,7 @@ export class UploadController {
     @UploadedFile() file: Express.Multer.File,
     // Express.Multer.File,
   ): Promise<{ url: string }> {
-    const downloadUrl = await this.uploadService.uploadFile(file);
-    return { url: downloadUrl };
+    const downloadUrl = await this.uploadService.uploadFile(file)
+    return { url: downloadUrl }
   }
 }

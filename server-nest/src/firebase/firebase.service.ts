@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common'
 import {
-  getApps,
   cert,
   initializeApp,
+  getApps,
   App,
   ServiceAccount,
-} from 'firebase-admin/app';
-import { getStorage, Storage } from 'firebase-admin/storage';
-import { serviceAccountConfig } from 'src/config/service-account.config';
+} from 'firebase-admin/app'
+import { getStorage, Storage } from 'firebase-admin/storage'
+import { serviceAccountConfig } from 'src/config/service-account.config'
 
 @Injectable()
 export class FirebaseService {
-  public app: App;
-  public storage: Storage;
+  public app: App
+  public storage: Storage
 
   constructor() {
     if (getApps().length === 0) {
@@ -20,9 +20,9 @@ export class FirebaseService {
         credential: cert(serviceAccountConfig as ServiceAccount),
         databaseURL: process.env.FIREBASE_DATABASE_URL,
         storageBucket: `${process.env.FIREBASE_BUCKET_NAME}.appspot.com`,
-      });
+      })
 
-      this.storage = getStorage(this.app);
+      this.storage = getStorage(this.app)
     }
   }
 }
