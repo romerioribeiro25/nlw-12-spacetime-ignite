@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Injectable } from '@nestjs/common'
 import { Storage } from 'firebase-admin/storage'
-import { FirebaseService } from 'src/firebase/firebase.service'
 import { Express } from 'express'
+import { FirebaseService } from 'src/firebase/firebase.service'
 
 @Injectable()
 export class UploadService {
