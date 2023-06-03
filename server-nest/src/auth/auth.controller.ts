@@ -7,7 +7,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  create(@Body() createRegisterDto: CreateRegisterDto) {
-    return this.authService.create(createRegisterDto)
+  async create(@Body() { code }: CreateRegisterDto) {
+    const accessToken = await this.authService.createGithubAccessToken(code)
+
+    const user = await this.authService.getGithubUserWithAccessToken(
+      accessToken,
+    )
+
+    return user
   }
 }
