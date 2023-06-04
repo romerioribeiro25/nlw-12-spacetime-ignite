@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty } from 'class-validator'
 
-export class CreateRegisterDto {
+export class CreateGithubAccessTokenDto {
   @IsString()
   @IsNotEmpty()
   code: string

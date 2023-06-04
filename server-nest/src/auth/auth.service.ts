@@ -3,20 +3,15 @@ import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { Injectable, BadRequestException, HttpStatus } from '@nestjs/common'
 
-import { CreateRegisterDto } from './dto/create-register.dto'
 import { GithubUserDto } from './dto/github-user.dto'
-import { CreateGithubAccessTokenResponse } from './interface/create-github-access-token.interface'
-import { validationConfig } from 'src/config/validation.config'
 import { GithubLoginOauthDto } from './dto/github-login-oauth.dto'
+import { CreateGithubAccessTokenResponse } from './interface/create-github-access-token.interface'
 import { GithubAccessTokenException } from './exceptions/github-access-token.exception'
 import { GithubUserAccessTokenException } from './exceptions/github-user-access-token.exception'
+import { validationConfig } from 'src/config/validation.config'
 
 @Injectable()
 export class AuthService {
-  create(createRegiterDto: CreateRegisterDto) {
-    return 'This action adds a new auth'
-  }
-
   async createGithubAccessToken(code: string) {
     try {
       const accessTokenResponse = await axios.post<
@@ -79,9 +74,9 @@ export class AuthService {
       })
 
       // Transforma os dados recebidos em uma instância da classe GithubUserDto
-      const userInfo = plainToClass(GithubUserDto, userResponse.data)
+      const githubUserInfo = plainToClass(GithubUserDto, userResponse.data)
 
-      return userInfo
+      return githubUserInfo
     } catch (error) {
       console.log(error)
       throw new GithubUserAccessTokenException(
