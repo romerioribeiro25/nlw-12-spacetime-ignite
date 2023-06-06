@@ -1,26 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from 'src/prisma/prisma.service'
+import { GithubUserDto } from 'src/auth/dto/github-user.dto'
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async create(githubUserDto: GithubUserDto) {
+    let user = await this.prisma.user.findUnique({
+      where: {
+        githubId: githubUserDto.id,
+      },
+    })
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          githubId: githubUserDto.id,
+          login: githubUserDto.login,
+          name: githubUserDto.name,
+          avatarUrl: githubUserDto.avatar_url,
+        },
+      })
+    }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return user
   }
 }

@@ -1,3 +1,17 @@
-// import { IsNumber, IsString, IsUrl } from 'class-validator'
+import { IsString, IsNumber, IsUrl } from 'class-validator'
 
-export class CreateUserDto {}
+import { OmitType } from '@nestjs/mapped-types'
+
+import { GithubUserDto } from 'src/auth/dto/github-user.dto'
+
+export class CreateUserDto extends OmitType(GithubUserDto, [
+  'id',
+  'avatar_url',
+] as const) {
+  @IsString()
+  @IsUrl()
+  avatarUrl: string
+
+  @IsNumber()
+  githubId: number
+}
