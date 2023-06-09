@@ -1,7 +1,10 @@
+/* eslint-disable camelcase */
 import axios, { AxiosResponse } from 'axios'
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { Injectable, BadRequestException, HttpStatus } from '@nestjs/common'
+import { User } from '@prisma/client'
+import { JwtService } from '@nestjs/jwt'
 
 import { GithubUserDto } from './dto/github-user.dto'
 import { GithubLoginOauthDto } from './dto/github-login-oauth.dto'
@@ -12,6 +15,8 @@ import { validationConfig } from 'src/config/validation.config'
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly jwtService: JwtService) {}
+
   async createGithubAccessToken(code: string) {
     try {
       const accessTokenResponse = await axios.post<
@@ -49,9 +54,7 @@ export class AuthService {
           )
         }
 
-        // eslint-disable-next-line camelcase
         const { access_token } = accessTokenResponseData
-        // eslint-disable-next-line camelcase
         return access_token
       } else {
         throw new GithubAccessTokenException(
@@ -74,14 +77,30 @@ export class AuthService {
       })
 
       // Transforma os dados recebidos em uma instância da classe GithubUserDto
-      const githubUserInfo = plainToClass(GithubUserDto, userResponse.data)
+      const { avatar_url, id, login, name } = plainToClass(
+        GithubUserDto,
+        userResponse.data,
+      )
 
-      return githubUserInfo
+      const userName = name || login
+
+      return { avatar_url, id, login, name: userName }
     } catch (error) {
-      console.log(error)
       throw new GithubUserAccessTokenException(
         'O token de acesso é inválido ou expirou. Verifique suas credenciais.',
       )
     }
+  }
+
+  async jwtSignAsync(user: User) {
+    const payload = {
+      name: user.name,
+      avatarUrl: user.avatarUrl,
+      sub: user.id,
+    }
+
+    const token = await this.jwtService.signAsync(payload)
+
+    return token
   }
 }
